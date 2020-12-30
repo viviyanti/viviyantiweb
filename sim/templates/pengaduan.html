@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="jumbotron">
+  <h3>Pengaduan</h3>
+  <hr class="my-4">
+
+  <!--form pengaduan-->
+  <form method="POST">
+    {{form.hidden_tag()}}
+
+    <div class="form-group">
+      {{form.subjek.label(class="form-control-label")}}
+      {% if form.subjek.errors %}
+      {{form.subjek(class="form-control is-invalid")}}
+
+      <div class="invalid-feedback">
+        {% for error in form.subjek.errors %}
+        <span>{{error}}</span>
+        {% endfor %}
+      </div>
+      {% else %}
+      {{form.subjek(class="form-control")}}
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      {{form.katagori.label(class="form-control-label")}}
+      {% if form.katagori.errors %}
+      {{form.kategori(class="form-control is-invalid")}}
+
+      <div class="invalid-feedback">
+        {% for error in form.katagori.errors %}
+        <span>{{error}}</span>
+        {% endfor %}
+      </div>
+      {% else %}
+      {{form.katagori(class="form-control")}}
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      {{form.detail_pengaduan.label(class="form-control-label")}}
+      {% if form.detail_pengaduan.errors %}
+      {{form.detail_pengaduan(class="form-control is-invalid")}}
+
+      <div class="invalid-feedback">
+        {% for error in form.detail_pengaduan.errors %}
+        <span>{{error}}</span>
+        {% endfor %}
+      </div>
+      {% else %}
+      {{form.detail_pengaduan(class="form-control")}}
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      {{form.submit(class="btn btn-primary")}}
+    </div>
+
+  </form>
+  <hr class="my-4">
+  <h5>Data Pengaduan</h5>
+
+  <table class="table table-responsive table-hover table-danger">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Tgl</th>
+        <th scope="col">Subjek</th>
+        <th scope="col">Katagori</th>
+        <th scope="col">Detail Pengaduan</th>
+        <th scope="col">Id Mahasiswa</th>
+        <th scope="col">Edit</th>
+        <th scope="col">Hapus</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for data in dt_pengaduan%}
+      <tr>
+        <td scope="row"><a href="{{data.id}}" data-toggle="modal" data-target="#modalDetail{{data.id}}">O</a></td>
+        <td>{{data.tgl_post}}</td>
+        <td>{{data.subjek}}</td>
+        <td>{{data.katagori}}</td>
+        <td>{{data.detail_pengaduan}}</td>
+        <td>{{data.mahasiswa_id}} / {{data.mahasiswa.nama}}</td>
+        <td>
+          <a href="{{'editpengaduan'}}/{{data.id}}" class="btn btn-warning btn-xs" data-toggle="modal"
+            data-target="#modaledit{{data.id}}">Edit</a>
+        </td>
+        <td>
+          <a href="{{'delete'}}/{{data.id}}" class="btn btn-danger btn-xs" onclick="return confirmn('Apakah Kamu Akan Menghapus Data?')">Hapus</a>
+        </td>
+
+      </tr>
+
+      <!--edit data pengaduan-->
+
+      <div id="modalEdit{{data.id}}" class="modal fade " role="dialog">
+        <div class="modal-dialog">
+
+          <!-- modal konten -->
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Edit Data</h4>
+            </div>
+
+            <div class="modal-body">
+              <form action="{{url_for('vmahasiswa.editpengaduan')}}" method="POST">
+
+                <div class="form-group">
+                  <label>Subjek:</label>
+                    <input type="hidden" name="id" value="{{data.id}}">
+                  <input type="text" class="form-control" name="subjek" value="{{data.subjek}}">
+                </div>
+
+                <div class="form-group">
+                  <label>Katagori:</label>
+                  <input type="text" class="form-control" name="katagori" value="{{data.katagori}}">
+                </div>
+
+                <div class="form-group">
+                  <label>Detail Pengaduan:</label>
+                  <input type="text" class="form-control" name="detail_pengaduan" value="{{data.detail_pengaduan}}">
+                </div>
+
+                <div class="form-group">
+                  <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+              </form>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </tbody>
+
+    <!-- awal detail pengaduan -->
+      <div id="modalDetail{{data.id}}" class="modal fade " role="dialog">
+        <div class="modal-dialog">
+
+        <!-- modal konten -->
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Detail Data Mahasiswa</h4>
+            </div>
+            
+            <div class="modal-body">
+              <div class="row">
+
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label>Npm</label>
+                  </div>
+                  <div class="form-group">
+                    <label>Nama</label>
+                  </div>
+                  <div class="form-group">
+                    <label>Kelas</label>
+                  </div>
+                  <div class="form-group">
+                    <label>Alamat</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>: {{data.mahasiswa.npm}}</label>
+                  </div>
+                  <div class="form-group">
+                    <label>: {{data.mahasiswa.nama}}</label>
+                  </div>
+                  <div class="form-group">
+                    <label>: {{data.mahasiswa.kelas}}</label>
+                  </div>
+                  <div class="form-group">
+                    <label>: {{data.mahasiswa.alamat}}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-header">
+              <h4>Detail Data Pengaduan</h4>
+            </div>
+
+            <div class="modal-body">
+              <div class="row">
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Subjek</label>
+                  </div>
+                  <div class="form-group">
+                    <label>Katagori</label>
+                  </div>
+                  <div class="form-group">
+                    <label>Detail Pengaduan</label>
+                  </div>
+                  <div class="form-group">
+                    <label>Tgl Post</label>
+                  </div>
+                  <div class="form-group">
+                    <label>Id Mahasiswa</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>: {{data.subjek}}</label>
+                  </div>
+                  <div class="form-group">
+                    <label>: {{data.katagori}}</label>
+                  </div>
+                  <div class="form-group">
+                    <label>: {{data.detail_pengaduan}}</label>
+                  </div>
+                  <div class="form-group">
+                    <label>: {{data.tgl_post}}</label>
+                  </div>
+                  <div class="form-group">
+                    <label>: {{data.mahasiswa_id}}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!-- akhir detail pengaduan -->
+      {%endfor%}
+
+  </table>
+
+</div>
+
+{% endblock content %}
